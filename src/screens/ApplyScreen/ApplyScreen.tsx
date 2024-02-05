@@ -40,19 +40,27 @@ const ApplyScreen = () => {
       ]);
     }
   };
+  // Issue : TextInput이 하단배치시에 헤더고정이 안되어 native 설정 변경
+  // AndroidManifest.xml에서
+  // android:windowSoftInputMode="adjustUnspecified" => "adjustNothing"
+  // sideEffect : 키보드가 올라올때 컨텐츠가 밀려야 하는 경우는 avoidingView를 필수적으로 적용시켜줘야함
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={[]}>
         <KeyboardAvoidingView
           style={styles.keyboardAvoidingView}
-          behavior={Platform.select({ios: 'padding', android: undefined})}>
+          behavior={Platform.select({ios: 'padding', android: 'padding'})}>
           <FlatList
             keyExtractor={(item, index) => index.toString()}
             data={todoData}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={<Header />}
             // ListFooterComponent={
-            //   <Footer setValue={setInputTodo} onSubmit={onSubmit} />
+            //   <Footer
+            //     value={inputTodo}
+            //     setValue={setInputTodo}
+            //     onSubmit={onSubmit}
+            //   />
             // }
             ListEmptyComponent={<TodoEmpty />}
             stickyHeaderIndices={[0]}
