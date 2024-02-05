@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Button, Input, Text, View} from 'native-base';
 import {StyleSheet} from 'react-native';
 
-const ApplyScreenFooter = () => {
-  const [inputTodo, setInputTodo] = useState('');
-
-  console.log(inputTodo);
-
+type FooterType = {
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  onSubmit: () => void;
+};
+const ApplyScreenFooter = ({setValue, onSubmit}: FooterType) => {
   return (
     <View paddingX={'16px'} backgroundColor={'white'}>
       <Input
@@ -17,17 +17,10 @@ const ApplyScreenFooter = () => {
         w={{base: '100%'}}
         placeholder="오늘은 무엇을 해야하나요?"
         keyboardType="name-phone-pad"
-        onChangeText={setInputTodo}
-        onSubmitEditing={e => console.log('키 입력 : ', inputTodo)}
+        onChangeText={setValue}
+        onSubmitEditing={onSubmit}
       />
-      <Button
-        onPress={() => console.log('test')}
-        style={styles.button}
-        backgroundColor={'transparent'}>
-        <Text color={'primary.500'} bold fontSize={'md'}>
-          등록
-        </Text>
-      </Button>
+      <SumitButton onSubmit={onSubmit} />
     </View>
   );
 };
@@ -43,3 +36,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const SumitButton = ({onSubmit}: Pick<FooterType, 'onSubmit'>) => {
+  return (
+    <Button
+      onPress={onSubmit}
+      style={styles.button}
+      backgroundColor={'transparent'}>
+      <Text color={'primary.500'} bold fontSize={'md'}>
+        등록
+      </Text>
+    </Button>
+  );
+};

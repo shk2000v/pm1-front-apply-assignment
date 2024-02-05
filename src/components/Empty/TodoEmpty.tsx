@@ -1,11 +1,11 @@
 import React from 'react';
 import {Center, Text} from 'native-base';
 import Icon from '../Icon';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, ViewStyle} from 'react-native';
 
 const TodoEmpty = () => {
   return (
-    <Center style={styles.container}>
+    <Center style={[styles.container]}>
       <Icon.Target />
       <Text
         textAlign={'center'}

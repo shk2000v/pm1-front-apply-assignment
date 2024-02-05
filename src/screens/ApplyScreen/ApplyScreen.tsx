@@ -1,73 +1,111 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import {AppState, ImageStyle, Linking, StyleSheet} from 'react-native';
 import {
-  Button,
-  Flex,
-  Image,
-  KeyboardAvoidingView,
-  StatusBar,
-  Text,
-  View,
-} from 'native-base';
+  FlatList,
+  Platform,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
+import {KeyboardAvoidingView} from 'native-base';
 import Header from '@/components/ApplyScreen/Header';
-import Body from '@/components/ApplyScreen/Body';
 import Footer from '@/components/ApplyScreen/Footer';
+import TodoEmpty from '@/components/Empty/TodoEmpty';
+import TodoCard from '@/components/Card/TodoCard';
+
+type TodoListDataType = {
+  id: number;
+  name: string;
+};
 
 const ApplyScreen = () => {
+  const data: ArrayLike<TodoListDataType> | null | undefined = [
+    {
+      id: 1,
+      name: '첼로 레슨 받기',
+    },
+    {
+      id: 2,
+      name: '도서관에 책 반납',
+    },
+    {
+      id: 3,
+      name: '일기 쓰기',
+    },
+  ];
+  const [todoData, setTodoData] = useState<TodoListDataType[]>([]);
+  const [inputTodo, setInputTodo] = useState('');
+  const [selectedTodo, setSelectedTodo] = useState<number[]>([]);
+
+  const onPressCheck = (idx: number) => {
+    setSelectedTodo(prev => {
+      const result = prev.includes(idx)
+        ? prev.filter(i => i !== idx)
+        : [idx, ...prev];
+      return result;
+    });
+  };
+
+  const onPressComplete = () => {
+    console.log('[onPressComplete] : ', onPressComplete);
+  };
+  const onSubmit = () => {
+    const len = todoData.length + 1;
+    setTodoData([{id: len, name: inputTodo}, ...todoData]);
+    setInputTodo('');
+  };
+
+  const {height} = useWindowDimensions();
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={[]}>
-        {/* header status bar */}
-        <StatusBar backgroundColor={'#741FFF'} />
-        {/* 헤더 */}
-        <Header />
-        {/*  */}
-        <Body />
-        {/* footer : 할일등록 TextInput */}
-        <Footer />
+        <KeyboardAvoidingView
+          style={styles.keyboardAvoidingView}
+          behavior={Platform.select({ios: 'padding', android: undefined})}>
+          <FlatList
+            keyExtractor={(item, index) => index.toString()}
+            data={todoData}
+            // data={[] as TodoListDataType[]}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={<Header />}
+            // ListFooterComponent={
+            //   <Footer setValue={setInputTodo} onSubmit={onSubmit} />
+            // }
+            ListEmptyComponent={<TodoEmpty />}
+            stickyHeaderIndices={[0]}
+            // contentContainerStyle={[styles.listWrap, {height}]}
+            contentContainerStyle={[styles.listWrap, {}]}
+            renderItem={({item, _}) => {
+              const isChecked = selectedTodo.includes(item.id);
+              return (
+                <TodoCard
+                  isChecked={isChecked}
+                  name={item.name}
+                  // onPressCheck={() => onPressCheck(index)}
+                  onPressCheck={() => onPressCheck(item.id)}
+                  onPressComplete={onPressComplete}
+                />
+              );
+            }}
+          />
+          <Footer setValue={setInputTodo} onSubmit={onSubmit} />
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 };
 
 export const styles = StyleSheet.create({
-  image: {
-    width: 204,
-    height: 228,
-  },
-  button: {
-    width: '100%',
-    marginTop: 20,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    lineHeight: 20,
-    color: 'white',
-  },
   container: {
     flex: 1,
     backgroundColor: 'white',
   },
-  linearGradient: {
+  keyboardAvoidingView: {
     flex: 1,
+    backgroundColor: 'white',
   },
-  contentContainer: {
+  listWrap: {
     flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    paddingHorizontal: 37,
-    alignItems: 'center',
-  },
-  logoContainer: {
-    alignItems: 'center',
-  },
-  logo: {
-    width: 115,
-    height: 25,
-    marginBottom: 40,
-    resizeMode: 'contain',
+    // backgroundColor: 'red',
   },
 });
 
