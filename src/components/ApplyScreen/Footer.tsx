@@ -3,10 +3,11 @@ import {Button, Input, Text, View} from 'native-base';
 import {StyleSheet} from 'react-native';
 
 type FooterType = {
+  value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   onSubmit: () => void;
 };
-const ApplyScreenFooter = ({setValue, onSubmit}: FooterType) => {
+const ApplyScreenFooter = ({value, setValue, onSubmit}: FooterType) => {
   return (
     <View paddingX={'16px'} backgroundColor={'white'}>
       <Input
@@ -17,10 +18,11 @@ const ApplyScreenFooter = ({setValue, onSubmit}: FooterType) => {
         w={{base: '100%'}}
         placeholder="오늘은 무엇을 해야하나요?"
         keyboardType="name-phone-pad"
+        value={value}
         onChangeText={setValue}
         onSubmitEditing={onSubmit}
+        InputRightElement={<SumitButton onSubmit={onSubmit} />}
       />
-      <SumitButton onSubmit={onSubmit} />
     </View>
   );
 };
@@ -29,11 +31,8 @@ export default ApplyScreenFooter;
 
 const styles = StyleSheet.create({
   button: {
-    position: 'absolute',
-    right: 0,
-    paddingRight: 30,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Pressable, Text, View} from 'native-base';
+import {Pressable, Text, View} from 'native-base';
 import Icon from '../Icon';
 import {StyleSheet} from 'react-native';
 
@@ -44,6 +44,7 @@ const TodoCard = ({
           paddingX={'4px'}
           justifyContent={'center'}
           backgroundColor={'#00DDD6'}
+          hitSlop={10}
           borderRadius={'20px'}>
           <Text
             fontSize={'12px'}

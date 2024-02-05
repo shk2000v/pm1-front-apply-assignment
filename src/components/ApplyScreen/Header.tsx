@@ -11,6 +11,14 @@ const ApplyScreenHeader = () => {
 
   return (
     <>
+      {/* 아래로 당겼을 시에  */}
+      <View
+        position={'absolute'}
+        top={-500}
+        backgroundColor={PRIMARY}
+        width={'100%'}
+        height={500}
+      />
       <StatusBar backgroundColor={PRIMARY} />
       {/* SafeArea가 아이폰에서 왜인지 인식되지 못하여 직접 Inset 추가 */}
       {Platform.OS === 'ios' && <TopInset backgroundColor={PRIMARY} />}

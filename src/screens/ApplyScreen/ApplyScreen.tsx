@@ -1,11 +1,6 @@
 import React, {useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import {
-  FlatList,
-  Platform,
-  StyleSheet,
-  useWindowDimensions,
-} from 'react-native';
+import {Alert, FlatList, Platform, StyleSheet} from 'react-native';
 import {KeyboardAvoidingView} from 'native-base';
 import Header from '@/components/ApplyScreen/Header';
 import Footer from '@/components/ApplyScreen/Footer';
@@ -18,20 +13,6 @@ type TodoListDataType = {
 };
 
 const ApplyScreen = () => {
-  const data: ArrayLike<TodoListDataType> | null | undefined = [
-    {
-      id: 1,
-      name: '첼로 레슨 받기',
-    },
-    {
-      id: 2,
-      name: '도서관에 책 반납',
-    },
-    {
-      id: 3,
-      name: '일기 쓰기',
-    },
-  ];
   const [todoData, setTodoData] = useState<TodoListDataType[]>([]);
   const [inputTodo, setInputTodo] = useState('');
   const [selectedTodo, setSelectedTodo] = useState<number[]>([]);
@@ -49,12 +30,16 @@ const ApplyScreen = () => {
     console.log('[onPressComplete] : ', onPressComplete);
   };
   const onSubmit = () => {
-    const len = todoData.length + 1;
-    setTodoData([{id: len, name: inputTodo}, ...todoData]);
-    setInputTodo('');
+    if (inputTodo.length > 0) {
+      const len = todoData.length + 1;
+      setTodoData([{id: len, name: inputTodo}, ...todoData]);
+      setInputTodo('');
+    } else {
+      Alert.alert('알림', '할일을 적어주세요!', [
+        {text: '확인', onPress: () => {}},
+      ]);
+    }
   };
-
-  const {height} = useWindowDimensions();
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={[]}>
@@ -64,7 +49,6 @@ const ApplyScreen = () => {
           <FlatList
             keyExtractor={(item, index) => index.toString()}
             data={todoData}
-            // data={[] as TodoListDataType[]}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={<Header />}
             // ListFooterComponent={
@@ -72,22 +56,24 @@ const ApplyScreen = () => {
             // }
             ListEmptyComponent={<TodoEmpty />}
             stickyHeaderIndices={[0]}
-            // contentContainerStyle={[styles.listWrap, {height}]}
-            contentContainerStyle={[styles.listWrap, {}]}
-            renderItem={({item, _}) => {
+            contentContainerStyle={[styles.listWrap]}
+            renderItem={({item}) => {
               const isChecked = selectedTodo.includes(item.id);
               return (
                 <TodoCard
                   isChecked={isChecked}
                   name={item.name}
-                  // onPressCheck={() => onPressCheck(index)}
                   onPressCheck={() => onPressCheck(item.id)}
                   onPressComplete={onPressComplete}
                 />
               );
             }}
           />
-          <Footer setValue={setInputTodo} onSubmit={onSubmit} />
+          <Footer
+            value={inputTodo}
+            setValue={setInputTodo}
+            onSubmit={onSubmit}
+          />
         </KeyboardAvoidingView>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -104,7 +90,8 @@ export const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   listWrap: {
-    flex: 1,
+    // flex: 1,
+    flexGrow: 1,
     // backgroundColor: 'red',
   },
 });
