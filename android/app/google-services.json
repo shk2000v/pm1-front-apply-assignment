@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "136476614846",
+    "project_id": "pm1-apply",
+    "storage_bucket": "pm1-apply.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136476614846:android:e23044e2cd3cfffd4ffeef",
+        "android_client_info": {
+          "package_name": "com.pm1.apply"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsohydPw9kmmatS7ewFfpKn2-TrtkahHA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
