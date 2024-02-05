@@ -1487,7 +1487,7 @@ SPEC CHECKSUMS:
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
   FlipperKit: 37525a5d056ef9b93d1578e04bc3ea1de940094f
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
+  glog: 035f1e36e53b355cf70f6434d161b36e7d21fecd
   GoogleAppMeasurement: bb3c564c3efb933136af0e94899e0a46167466a8
   GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   GTMSessionFetcher: 8a1b34ad97ebe6f909fb8b9b77fba99943007556
@@ -1548,4 +1548,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: be8d8a1b389dcdb9533bb23bafaf9e7eda11cd03
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.3

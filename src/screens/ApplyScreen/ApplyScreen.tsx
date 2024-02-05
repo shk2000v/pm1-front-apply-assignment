@@ -1,49 +1,23 @@
 import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import LinearGradient from 'react-native-linear-gradient';
-import {ImageStyle, Linking, StyleSheet} from 'react-native';
-import {Button, Flex, Image, Text, View} from 'native-base';
+import {AppState, ImageStyle, Linking, StyleSheet} from 'react-native';
+import {Button, Flex, Image, StatusBar, Text, View} from 'native-base';
+import Header from '@/components/ApplyScreen/Header';
+import Body from '@/components/ApplyScreen/Body';
+import Footer from '@/components/ApplyScreen/Footer';
 
 const ApplyScreen = () => {
-  const url =
-    'https://haenaenda.notion.site/113805bc81a14c6495ee11c05fdf1a60?pvs=4';
-  const handlePress = async () => {
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      await Linking.openURL(url);
-    } else {
-      console.error('URL 열기를 지원하지 않습니다:', url);
-    }
-  };
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={[]}>
-        <LinearGradient
-          colors={['#D8CBFF', 'white']}
-          style={styles.linearGradient}>
-          <Flex style={styles.contentContainer}>
-            <Image
-              alt="task"
-              source={require('@assets/task.png')}
-              style={styles.image as ImageStyle}
-              marginBottom="20px"
-            />
-
-            <Button
-              style={styles.button}
-              backgroundColor={'primary.500'}
-              onPress={handlePress}>
-              <Text style={styles.buttonText}>{'확인하기'}</Text>
-            </Button>
-          </Flex>
-          <View style={styles.logoContainer}>
-            <Image
-              alt="logo"
-              source={require('@assets/logo.png')}
-              style={styles.logo as ImageStyle}
-            />
-          </View>
-        </LinearGradient>
+        {/* header status bar */}
+        <StatusBar backgroundColor={'#741FFF'} />
+        {/* 헤더 */}
+        <Header />
+        {/*  */}
+        <Body />
+        {/* footer : 할일등록 TextInput */}
+        <Footer />
       </SafeAreaView>
     </SafeAreaProvider>
   );

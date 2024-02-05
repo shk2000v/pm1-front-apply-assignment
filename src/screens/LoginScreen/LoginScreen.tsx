@@ -31,6 +31,7 @@ const LoginScreen = () => {
   const createFormHandler = (key: string) => (value: string) => {
     setForm({...form, [key]: value});
   };
+
   type LoginNavigationProps = StackNavigationProp<ApplyStackParamList, 'Login'>;
   const navigation = useNavigation<LoginNavigationProps>();
 
