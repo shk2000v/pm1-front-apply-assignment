@@ -46,6 +46,10 @@ const LoginScreen = () => {
     }
   };
 
+  const onMovePage = () => {
+    navigation.navigate('Apply');
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={[]}>
@@ -83,6 +87,12 @@ const LoginScreen = () => {
                 backgroundColor={'primary.500'}
                 onPress={onSubmit}>
                 <Text style={styles.buttonText}>{'시작하기'}</Text>
+              </Button>
+              <Button
+                style={styles.button}
+                backgroundColor={'primary.500'}
+                onPress={onMovePage}>
+                <Text style={styles.buttonText}>{'이동'}</Text>
               </Button>
             </Flex>
           </KeyboardAvoidingView>

@@ -1,7 +1,15 @@
 import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {AppState, ImageStyle, Linking, StyleSheet} from 'react-native';
-import {Button, Flex, Image, StatusBar, Text, View} from 'native-base';
+import {
+  Button,
+  Flex,
+  Image,
+  KeyboardAvoidingView,
+  StatusBar,
+  Text,
+  View,
+} from 'native-base';
 import Header from '@/components/ApplyScreen/Header';
 import Body from '@/components/ApplyScreen/Body';
 import Footer from '@/components/ApplyScreen/Footer';
@@ -40,6 +48,7 @@ export const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   linearGradient: {
     flex: 1,

@@ -9,6 +9,9 @@ const App = () => {
       primary: {
         500: '#741FFF', // 원하는 primary 컬러로 변경
       },
+      border: {
+        500: '#E5E7EC',
+      },
     },
   });
 
