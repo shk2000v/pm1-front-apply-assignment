@@ -88,12 +88,12 @@ const LoginScreen = () => {
                 onPress={onSubmit}>
                 <Text style={styles.buttonText}>{'시작하기'}</Text>
               </Button>
-              <Button
+              {/* <Button
                 style={styles.button}
                 backgroundColor={'primary.500'}
                 onPress={onMovePage}>
                 <Text style={styles.buttonText}>{'이동'}</Text>
-              </Button>
+              </Button> */}
             </Flex>
           </KeyboardAvoidingView>
           <View style={styles.logoContainer}>
