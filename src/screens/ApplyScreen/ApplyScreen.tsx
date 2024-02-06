@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {Alert, FlatList, Platform, StyleSheet} from 'react-native';
 import {KeyboardAvoidingView} from 'native-base';
@@ -6,18 +6,23 @@ import Header from '@/components/ApplyScreen/Header';
 import Footer from '@/components/ApplyScreen/Footer';
 import TodoEmpty from '@/components/Empty/TodoEmpty';
 import TodoCard from '@/components/Card/TodoCard';
+import Realm from 'realm';
+import dayjs from 'dayjs';
+import {TodoTestSchema} from '@/realm/TodoTestSchema';
 
-type TodoListDataType = {
-  id: number;
-  name: string;
+type TodoListType = {
+  id: string;
+  title: string;
+  isChecked: false;
+  create_at: string;
 };
 
 const ApplyScreen = () => {
-  const [todoData, setTodoData] = useState<TodoListDataType[]>([]);
+  const [todoList, setTodoList] = useState<TodoListType[]>([]);
   const [inputTodo, setInputTodo] = useState('');
-  const [selectedTodo, setSelectedTodo] = useState<number[]>([]);
+  const [selectedTodo, setSelectedTodo] = useState<string[]>([]);
 
-  const onPressCheck = (idx: number) => {
+  const onPressCheck = (idx: string) => {
     setSelectedTodo(prev => {
       const result = prev.includes(idx)
         ? prev.filter(i => i !== idx)
@@ -26,20 +31,65 @@ const ApplyScreen = () => {
     });
   };
 
-  const onPressComplete = () => {
-    console.log('[onPressComplete] : ', onPressComplete);
-  };
   const onSubmit = () => {
     if (inputTodo.length > 0) {
-      const len = todoData.length + 1;
-      setTodoData([{id: len, name: inputTodo}, ...todoData]);
       setInputTodo('');
+      // realm todo create
+      createDB(inputTodo);
     } else {
       Alert.alert('알림', '할일을 적어주세요!', [
         {text: '확인', onPress: () => {}},
       ]);
     }
   };
+
+  // ==================
+  // ===[Realm Test]===
+  // ==================
+  // * relam config
+  // The initial schemaVersion is 0.
+  const realm = new Realm({
+    schema: [TodoTestSchema],
+  });
+  const readTodo = () => {
+    const result = realm.objects('todotest').toJSON() as TodoListType[];
+    setTodoList(result);
+    // console.log(result);
+  };
+  const createDB = (title: string) => {
+    const id = new Realm.BSON.UUID();
+    realm.write(() => {
+      realm.create('todotest', {
+        id: id.toString(),
+        title,
+        isChecked: false,
+        create_at: dayjs().toString(),
+      });
+    });
+    readTodo();
+  };
+  const deleteTodoList = (id: string) => {
+    const deleteDB = realm.objects('todotest').filtered(`id = '${id}'`)[0];
+    realm.write(() => {
+      realm.delete(deleteDB);
+    });
+
+    // 삭제 후 데이터 갱신
+    readTodo();
+  };
+  // const updateDB = () => {
+  //   realm.write (() => {
+  //     realm.create('member', {})
+  //   })
+  // }
+
+  useEffect(() => {
+    // const fetchLocalData = readTodo();
+    // setTodoList(fetchLocalData);
+    readTodo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Issue : TextInput이 하단배치시에 헤더고정이 안되어 native 설정 변경
   // AndroidManifest.xml에서
   // android:windowSoftInputMode="adjustUnspecified" => "adjustNothing"
@@ -52,7 +102,8 @@ const ApplyScreen = () => {
           behavior={Platform.select({ios: 'padding', android: 'padding'})}>
           <FlatList
             keyExtractor={(item, index) => index.toString()}
-            data={todoData}
+            // data={todoData}
+            data={todoList}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={<Header />}
             // ListFooterComponent={
@@ -70,9 +121,9 @@ const ApplyScreen = () => {
               return (
                 <TodoCard
                   isChecked={isChecked}
-                  name={item.name}
+                  name={item.title}
                   onPressCheck={() => onPressCheck(item.id)}
-                  onPressComplete={onPressComplete}
+                  onPressComplete={() => deleteTodoList(item.id)}
                 />
               );
             }}

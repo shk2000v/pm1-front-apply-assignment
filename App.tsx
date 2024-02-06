@@ -2,6 +2,7 @@ import React from 'react';
 import {NativeBaseProvider, extendTheme} from 'native-base';
 import {NavigationContainer} from '@react-navigation/native';
 import ApplyStack from './src/screens/ApplyStack';
+import 'react-native-get-random-values';
 
 const App = () => {
   const theme = extendTheme({
