@@ -20,16 +20,17 @@ type TodoListType = {
 const ApplyScreen = () => {
   const [todoList, setTodoList] = useState<TodoListType[]>([]);
   const [inputTodo, setInputTodo] = useState('');
-  const [selectedTodo, setSelectedTodo] = useState<string[]>([]);
 
-  const onPressCheck = (idx: string) => {
-    setSelectedTodo(prev => {
-      const result = prev.includes(idx)
-        ? prev.filter(i => i !== idx)
-        : [idx, ...prev];
-      return result;
-    });
-  };
+  // *legacy
+  // const [selectedTodo, setSelectedTodo] = useState<string[]>([]);
+  // const onPressCheck = (idx: string) => {
+  //   setSelectedTodo(prev => {
+  //     const result = prev.includes(idx)
+  //       ? prev.filter(i => i !== idx)
+  //       : [idx, ...prev];
+  //     return result;
+  //   });
+  // };
 
   const onSubmit = () => {
     if (inputTodo.length > 0) {
@@ -77,15 +78,19 @@ const ApplyScreen = () => {
     // 삭제 후 데이터 갱신
     readTodo();
   };
-  // const updateDB = () => {
-  //   realm.write (() => {
-  //     realm.create('member', {})
-  //   })
-  // }
+  const updateTodoList = (id: string) => {
+    const targetData = realm.objects('todotest').filtered(`id = '${id}'`)[0];
+    // console.log('[targetData] : ', targetData);
+
+    realm.write(() => {
+      targetData.isChecked = !targetData.isChecked;
+    });
+
+    // 수정 후 데이터 갱신
+    readTodo();
+  };
 
   useEffect(() => {
-    // const fetchLocalData = readTodo();
-    // setTodoList(fetchLocalData);
     readTodo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -117,12 +122,13 @@ const ApplyScreen = () => {
             stickyHeaderIndices={[0]}
             contentContainerStyle={[styles.listWrap]}
             renderItem={({item}) => {
-              const isChecked = selectedTodo.includes(item.id);
+              // const isChecked = selectedTodo.includes(item.id);
               return (
                 <TodoCard
-                  isChecked={isChecked}
+                  isChecked={item.isChecked}
                   name={item.title}
-                  onPressCheck={() => onPressCheck(item.id)}
+                  // onPressCheck={() => onPressCheck(item.id)}
+                  onPressCheck={() => updateTodoList(item.id)}
                   onPressComplete={() => deleteTodoList(item.id)}
                 />
               );

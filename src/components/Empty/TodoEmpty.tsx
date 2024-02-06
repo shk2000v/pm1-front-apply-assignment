@@ -1,7 +1,7 @@
 import React from 'react';
 import {Center, Text} from 'native-base';
 import Icon from '../Icon';
-import {StyleSheet, ViewStyle} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 const TodoEmpty = () => {
   return (
