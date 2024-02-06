@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 import {TodoTestSchema} from '../realm/TodoTestSchema';
 import {Alert} from 'react-native';
 import Realm from 'realm';
+import NetInfo from '@react-native-community/netinfo';
 
 type TodoListType = {
   id: string;
@@ -95,6 +96,57 @@ const useApplyScreenHooks = () => {
     readTodo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ===================================
+  // *동기화 로직 설계*
+  // 로컬 변경 감지 : 앱이 오프라인 상태에서 변경된 데이터를 로컬에 저장
+  // 서버와의 동기화 : 네트워크가 연결되면 로컬 변경 사항을 서버와 동기화함
+  //
+  // *충동 해결 전략*
+  // 1. 클라이언트 우선
+  // 2. 서버 우선
+  // 3. 자동 병합
+  // 4. 수동 충돌 해결
+  // ===================================
+  // Device 인터넷 연결 상태 확인
+  NetInfo.addEventListener(state => {
+    console.log('Connection type:', state.type);
+    console.log('Is connected?', state.isConnected);
+  });
+
+  // 변경 내용을 로컬에 저장
+  const saveToLocal = changes => {
+    realm.write(() => {
+      // Save changes to local database
+    });
+  };
+
+  // 변경 내용 로컬에 저장
+  function saveChangesToLocal(changes) {
+    // 로컬 데이터베이스에 변경 사항 저장
+  }
+
+  // 네트워크 연결 시 서버와 동기화
+  // function synchronizeWithServer() {
+  //   const changes = getLocalChanges();
+  //   sendChangesToServer(changes).then(response => {
+  //     // 서버 응답 처리
+  //   });
+  // }
+
+  // 네트워크 연결 복원 시 서버와 동기화
+  // NetInfo.addEventListener(state => {
+  //   if (state.isConnected) {
+  //     const changes = getChangesFromLocal();
+  //     syncWithServer(changes);
+  //   }
+  // });
+
+  // 서버와 동기화 함수
+  const syncWithServer = changes => {
+    // Send changes to the server
+    // Update local database with server response if needed
+  };
 
   return {
     onSubmit,
