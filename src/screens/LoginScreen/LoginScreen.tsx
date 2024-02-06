@@ -58,7 +58,7 @@ const LoginScreen = () => {
           style={styles.linearGradient}>
           <KeyboardAvoidingView
             style={styles.keyboardAvoidingView}
-            behavior={Platform.select({ios: 'padding', android: undefined})}>
+            behavior={Platform.select({ios: 'padding', android: 'padding'})}>
             <Flex style={styles.contentContainer}>
               <Image
                 alt="intro"
@@ -88,12 +88,12 @@ const LoginScreen = () => {
                 onPress={onSubmit}>
                 <Text style={styles.buttonText}>{'시작하기'}</Text>
               </Button>
-              <Button
+              {/* <Button
                 style={styles.button}
                 backgroundColor={'primary.500'}
                 onPress={onMovePage}>
                 <Text style={styles.buttonText}>{'이동'}</Text>
-              </Button>
+              </Button> */}
             </Flex>
           </KeyboardAvoidingView>
           <View style={styles.logoContainer}>

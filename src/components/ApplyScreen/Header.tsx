@@ -11,7 +11,7 @@ const ApplyScreenHeader = () => {
 
   return (
     <>
-      {/* 아래로 당겼을 시에  */}
+      {/* 아래로 당겼을 시에 영역 backgroundColor 설정  */}
       <View
         position={'absolute'}
         top={-500}
