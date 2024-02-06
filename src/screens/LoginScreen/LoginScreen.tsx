@@ -58,7 +58,7 @@ const LoginScreen = () => {
           style={styles.linearGradient}>
           <KeyboardAvoidingView
             style={styles.keyboardAvoidingView}
-            behavior={Platform.select({ios: 'padding', android: undefined})}>
+            behavior={Platform.select({ios: 'padding', android: 'padding'})}>
             <Flex style={styles.contentContainer}>
               <Image
                 alt="intro"
