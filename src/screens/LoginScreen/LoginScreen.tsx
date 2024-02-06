@@ -31,6 +31,7 @@ const LoginScreen = () => {
   const createFormHandler = (key: string) => (value: string) => {
     setForm({...form, [key]: value});
   };
+
   type LoginNavigationProps = StackNavigationProp<ApplyStackParamList, 'Login'>;
   const navigation = useNavigation<LoginNavigationProps>();
 
@@ -43,6 +44,10 @@ const LoginScreen = () => {
     } catch (e) {
       Alert.alert('로그인 실패');
     }
+  };
+
+  const onMovePage = () => {
+    navigation.navigate('Apply');
   };
 
   return (
@@ -82,6 +87,12 @@ const LoginScreen = () => {
                 backgroundColor={'primary.500'}
                 onPress={onSubmit}>
                 <Text style={styles.buttonText}>{'시작하기'}</Text>
+              </Button>
+              <Button
+                style={styles.button}
+                backgroundColor={'primary.500'}
+                onPress={onMovePage}>
+                <Text style={styles.buttonText}>{'이동'}</Text>
               </Button>
             </Flex>
           </KeyboardAvoidingView>

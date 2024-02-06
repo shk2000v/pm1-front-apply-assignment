@@ -1,90 +1,163 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import LinearGradient from 'react-native-linear-gradient';
-import {ImageStyle, Linking, StyleSheet} from 'react-native';
-import {Button, Flex, Image, Text, View} from 'native-base';
+import {Alert, FlatList, Platform, StyleSheet} from 'react-native';
+import {KeyboardAvoidingView} from 'native-base';
+import Header from '@/components/ApplyScreen/Header';
+import Footer from '@/components/ApplyScreen/Footer';
+import TodoEmpty from '@/components/Empty/TodoEmpty';
+import TodoCard from '@/components/Card/TodoCard';
+import Realm from 'realm';
+import dayjs from 'dayjs';
+import {TodoTestSchema} from '@/realm/TodoTestSchema';
+
+type TodoListType = {
+  id: string;
+  title: string;
+  isChecked: false;
+  create_at: string;
+};
 
 const ApplyScreen = () => {
-  const url =
-    'https://haenaenda.notion.site/113805bc81a14c6495ee11c05fdf1a60?pvs=4';
-  const handlePress = async () => {
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      await Linking.openURL(url);
+  const [todoList, setTodoList] = useState<TodoListType[]>([]);
+  const [inputTodo, setInputTodo] = useState('');
+
+  // *legacy
+  // const [selectedTodo, setSelectedTodo] = useState<string[]>([]);
+  // const onPressCheck = (idx: string) => {
+  //   setSelectedTodo(prev => {
+  //     const result = prev.includes(idx)
+  //       ? prev.filter(i => i !== idx)
+  //       : [idx, ...prev];
+  //     return result;
+  //   });
+  // };
+
+  const onSubmit = () => {
+    if (inputTodo.length > 0) {
+      setInputTodo('');
+      // realm todo create
+      createDB(inputTodo);
     } else {
-      console.error('URL 열기를 지원하지 않습니다:', url);
+      Alert.alert('알림', '할일을 적어주세요!', [
+        {text: '확인', onPress: () => {}},
+      ]);
     }
   };
+
+  // ==================
+  // ===[Realm Test]===
+  // ==================
+  // * relam config
+  // The initial schemaVersion is 0.
+  const realm = new Realm({
+    schema: [TodoTestSchema],
+  });
+  const readTodo = () => {
+    const result = realm.objects('todotest').toJSON() as TodoListType[];
+    setTodoList(result);
+    // console.log(result);
+  };
+  const createDB = (title: string) => {
+    const id = new Realm.BSON.UUID();
+    realm.write(() => {
+      realm.create('todotest', {
+        id: id.toString(),
+        title,
+        isChecked: false,
+        create_at: dayjs().toString(),
+      });
+    });
+    readTodo();
+  };
+  const deleteTodoList = (id: string) => {
+    const deleteDB = realm.objects('todotest').filtered(`id = '${id}'`)[0];
+    realm.write(() => {
+      realm.delete(deleteDB);
+    });
+
+    // 삭제 후 데이터 갱신
+    readTodo();
+  };
+  const updateTodoList = (id: string) => {
+    const targetData = realm.objects('todotest').filtered(`id = '${id}'`)[0];
+    // console.log('[targetData] : ', targetData);
+
+    realm.write(() => {
+      targetData.isChecked = !targetData.isChecked;
+    });
+
+    // 수정 후 데이터 갱신
+    readTodo();
+  };
+
+  useEffect(() => {
+    readTodo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Issue : TextInput이 하단배치시에 헤더고정이 안되어 native 설정 변경
+  // AndroidManifest.xml에서
+  // android:windowSoftInputMode="adjustUnspecified" => "adjustNothing"
+  // sideEffect : 키보드가 올라올때 컨텐츠가 밀려야 하는 경우는 avoidingView를 필수적으로 적용시켜줘야함
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={[]}>
-        <LinearGradient
-          colors={['#D8CBFF', 'white']}
-          style={styles.linearGradient}>
-          <Flex style={styles.contentContainer}>
-            <Image
-              alt="task"
-              source={require('@assets/task.png')}
-              style={styles.image as ImageStyle}
-              marginBottom="20px"
-            />
-
-            <Button
-              style={styles.button}
-              backgroundColor={'primary.500'}
-              onPress={handlePress}>
-              <Text style={styles.buttonText}>{'확인하기'}</Text>
-            </Button>
-          </Flex>
-          <View style={styles.logoContainer}>
-            <Image
-              alt="logo"
-              source={require('@assets/logo.png')}
-              style={styles.logo as ImageStyle}
-            />
-          </View>
-        </LinearGradient>
+        <KeyboardAvoidingView
+          style={styles.keyboardAvoidingView}
+          behavior={Platform.select({ios: 'padding', android: 'padding'})}>
+          <FlatList
+            keyExtractor={(item, index) => index.toString()}
+            // data={todoData}
+            data={todoList}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={<Header />}
+            // ListFooterComponent={
+            //   <Footer
+            //     value={inputTodo}
+            //     setValue={setInputTodo}
+            //     onSubmit={onSubmit}
+            //   />
+            // }
+            ListEmptyComponent={<TodoEmpty />}
+            stickyHeaderIndices={[0]}
+            contentContainerStyle={[styles.listWrap]}
+            renderItem={({item}) => {
+              // const isChecked = selectedTodo.includes(item.id);
+              return (
+                <TodoCard
+                  isChecked={item.isChecked}
+                  name={item.title}
+                  // onPressCheck={() => onPressCheck(item.id)}
+                  onPressCheck={() => updateTodoList(item.id)}
+                  onPressComplete={() => deleteTodoList(item.id)}
+                />
+              );
+            }}
+          />
+          <Footer
+            value={inputTodo}
+            setValue={setInputTodo}
+            onSubmit={onSubmit}
+          />
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 };
 
 export const styles = StyleSheet.create({
-  image: {
-    width: 204,
-    height: 228,
-  },
-  button: {
-    width: '100%',
-    marginTop: 20,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    lineHeight: 20,
-    color: 'white',
-  },
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
-  linearGradient: {
+  keyboardAvoidingView: {
     flex: 1,
+    backgroundColor: 'white',
   },
-  contentContainer: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    paddingHorizontal: 37,
-    alignItems: 'center',
-  },
-  logoContainer: {
-    alignItems: 'center',
-  },
-  logo: {
-    width: 115,
-    height: 25,
-    marginBottom: 40,
-    resizeMode: 'contain',
+  listWrap: {
+    // flex: 1,
+    flexGrow: 1,
+    // backgroundColor: 'red',
   },
 });
 
