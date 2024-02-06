@@ -6,7 +6,7 @@ import Header from '@/components/ApplyScreen/Header';
 import Footer from '@/components/ApplyScreen/Footer';
 import TodoEmpty from '@/components/Empty/TodoEmpty';
 import TodoCard from '@/components/Card/TodoCard';
-import useApplyScreenHooks from '@/useApplyScreenHooks';
+import useApplyScreenHooks from '@/hooks/useApplyScreenHooks';
 
 const ApplyScreen = () => {
   const {
@@ -30,33 +30,25 @@ const ApplyScreen = () => {
           behavior={Platform.select({ios: 'padding', android: 'padding'})}>
           <FlatList
             keyExtractor={(item, index) => index.toString()}
-            // data={todoData}
-            data={todoList}
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={[styles.listWrap]}
             ListHeaderComponent={<Header />}
-            // ListFooterComponent={
-            //   <Footer
-            //     value={inputTodo}
-            //     setValue={setInputTodo}
-            //     onSubmit={onSubmit}
-            //   />
-            // }
             ListEmptyComponent={<TodoEmpty />}
             stickyHeaderIndices={[0]}
-            contentContainerStyle={[styles.listWrap]}
+            data={todoList}
             renderItem={({item}) => {
-              // const isChecked = selectedTodo.includes(item.id);
               return (
                 <TodoCard
                   isChecked={item.isChecked}
                   name={item.title}
-                  // onPressCheck={() => onPressCheck(item.id)}
                   onPressCheck={() => updateTodoList(item.id)}
                   onPressComplete={() => deleteTodoList(item.id)}
                 />
               );
             }}
           />
+
+          {/* 하단 Todo 입력 input */}
           <Footer
             value={inputTodo}
             setValue={setInputTodo}
@@ -78,9 +70,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   listWrap: {
-    // flex: 1,
     flexGrow: 1,
-    // backgroundColor: 'red',
   },
 });
 
